@@ -1,9 +1,13 @@
 # nlohmann-json-nuget
 
-[NuGet](https://www.nuget.org/) package for Niels Lohmann's [JSON for Modern C++](https://github.com/nlohmann/json) single-header library.
+[NuGet package](https://www.nuget.org/packages/nlohmann.json/) for Niels Lohmann's [JSON for Modern C++](https://github.com/nlohmann/json) single-header library.
 
 ## Usage
-Add `nlohmann.json.x.y.z` package from official nuget.org source.
+Add [`nlohmann.json` package](https://www.nuget.org/packages/nlohmann.json/) from official nuget.org source, or use package manager command-line:
+
+```
+PM> Install-Package nlohmann.json -Version x.x.x
+```
 
 ## Packaging
 1. Download the latest NuGet command-line interface (nuget.exe) from https://www.nuget.org/downloads and copy to this folder.
