@@ -12,4 +12,5 @@ PM> Install-Package nlohmann.json -Version x.x.x
 ## Packaging
 1. Download the latest NuGet command-line interface (nuget.exe) from https://www.nuget.org/downloads and copy to this folder.
 2. Copy the [latest single include header file (json.hpp)](https://github.com/nlohmann/json/releases) to `include\nlohmann\json.hpp`
-3. Execute `pack.ps1`
+3. Optionally fill the `<releaseNotes>` section in `nlohmann.json.nuspec`
+4. Execute `pack.ps1`

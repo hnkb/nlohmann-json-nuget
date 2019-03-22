@@ -15,9 +15,10 @@
 		<!-- encouraged: should include `native` and `nativepackage` -->
 		<tags>nlohmann JSON modern C++ Cpp native nativepackage</tags>
 		<!-- Add additional optional tags here. -->
-		<licenseUrl>https://github.com/nlohmann/json#license</licenseUrl>
-		<projectUrl>https://nlohmann.github.io/json/</projectUrl>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/nlohmann/json</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<releaseNotes></releaseNotes>
 		<copyright>Copyright © 2013-2018 Niels Lohmann</copyright>
 	</metadata>
 
