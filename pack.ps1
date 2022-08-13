@@ -1,5 +1,5 @@
 
-$headerPath = "include\nlohmann\json.hpp";
+$headerPath = "include\single_include\nlohmann\json.hpp";
 
 if (-not(Test-Path $headerPath -PathType Leaf)) {
 	echo "Please download release files and extract to '$headerPath'";
@@ -11,4 +11,5 @@ if (-not(Test-Path $headerPath -PathType Leaf)) {
 	$version = "$major.$minor.$patch";
 	
 	& ".\nuget.exe" pack ".\nlohmann.json.nuspec" -Version $version;
+	& ".\nuget.exe" pack ".\nlohmann.json.decomposed.nuspec" -Version $version;
 }

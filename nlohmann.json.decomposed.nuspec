@@ -8,10 +8,10 @@
 	-->
 	<metadata>
 		<!-- required: -->
-		<id>nlohmann.json</id>
+		<id>nlohmann.json.decomposed</id>
 		<version>$version$</version>
 		<authors>Niels Lohmann</authors>
-		<description>JSON for Modern C++</description>
+		<description>JSON for Modern C++ (this version contains decomposed headers as opposed to the normal single header version)</description>
 		<!-- encouraged: should include `native` and `nativepackage` -->
 		<tags>nlohmann JSON modern C++ Cpp native nativepackage</tags>
 		<!-- Add additional optional tags here. -->
@@ -30,9 +30,9 @@
 	-->
 	<files>
 		<!-- includes -->
-		<file src="single_include\**" target="build\native\include" />
+		<file src="include\**" target="build\native\include" />
 
 		<!-- MSBuild .targets files -->
-		<file src="..\nlohmann.json.targets" target="build\native" />
+		<file src="..\nlohmann.json.decomposed.targets" target="build\native" />
 	</files>
 </package>
