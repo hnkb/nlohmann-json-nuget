@@ -19,7 +19,7 @@
 		<projectUrl>https://github.com/nlohmann/json</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<releaseNotes>$releaseNotes$</releaseNotes>
-		<copyright>Copyright (c) 2013-2019 Niels Lohmann (http://nlohmann.me).</copyright>
+		<copyright>Copyright (c) $copyrightText$</copyright>
 	</metadata>
 
 	<!--
