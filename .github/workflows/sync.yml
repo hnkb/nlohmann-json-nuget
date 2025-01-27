@@ -1,0 +1,90 @@
+name: Check for New Releases
+
+on:
+  workflow_dispatch:
+
+jobs:
+  find-new-versions:
+    runs-on: ubuntu-latest
+
+    outputs:
+      missing-versions: ${{ steps.find-missing.outputs.missing }}
+
+    steps:
+      - name: Fetch NuGet versions
+        id: get-nuget-versions
+        run: |
+          PACKAGE_ID="nlohmann.json"
+          URL="https://api.nuget.org/v3-flatcontainer/$PACKAGE_ID/index.json"
+          
+          ALL_NUGET_VERSIONS=$(curl -s $URL | jq -r '.versions | map(select(. != null)) | join("\n")')
+          echo "$ALL_NUGET_VERSIONS" | sort -V > nuget_versions.txt
+          LATEST_NUGET=$(tail -n1 nuget_versions.txt)
+          echo "latest_nuget=$LATEST_NUGET" >> $GITHUB_ENV
+
+      - name: Fetch latest GitHub releases
+        id: get-latest-repo-releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Fetch all releases (handle pagination if needed)
+          curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/nlohmann/json/releases?per_page=100" \
+            | jq -r '.[].tag_name | sub("^v";"")' \
+            | sort -V > gh_versions.txt
+
+      - name: Find missing versions
+        id: find-missing
+        run: |
+          # Filter GitHub releases > latest NuGet version
+          awk -v cutoff="${{ env.latest_nuget }}" '
+            BEGIN {
+              split(cutoff, cutoff_parts, ".")
+            }
+            {
+              split($0, parts, ".")
+              for (i=1; i<=3; i++) {
+                if (parts[i]+0 > cutoff_parts[i]+0) {
+                  print $0
+                  next
+                }
+                if (parts[i]+0 < cutoff_parts[i]+0) break
+              }
+            }' gh_versions.txt > missing_versions.txt
+
+          # Convert to JSON array for matrix
+          MISSING_VERSIONS_JSON=$(jq -R -s -c 'split("\n") | map(select(. != ""))' missing_versions.txt)
+          echo "$MISSING_VERSIONS_JSON" >> missing.json
+          echo "missing=$MISSING_VERSIONS_JSON" >> $GITHUB_OUTPUT
+
+      - name: Save a copy of working directory for debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: working-directory
+          path: .
+          retention-days: 1
+
+
+  trigger-publish:
+    needs: [find-new-versions]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write  # Needed to trigger workflows
+    strategy:
+      matrix:
+        version: ${{ fromJSON(needs.find-new-versions.outputs.missing-versions) }}
+    steps:
+      - name: Trigger publish workflow for ${{ matrix.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/publish.yml/dispatches" \
+            -d '{
+              "ref": "main",
+              "inputs": {
+                "version": "v${{ matrix.version }}"
+              }
+            }'
