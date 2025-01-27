@@ -1,0 +1,32 @@
+name: Publish Package for Specific Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number (e.g., 'v3.11.3')"
+        required: true
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the packages
+        run:  .\pack.ps1 -Version "${{ github.event.inputs.version }}"
+
+      - name: Save a copy of working directory for debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: working-directory
+          path: ${{ github.event.inputs.version }}
+          retention-days: 1
+
+
+      - name: Enable MSVC Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1.12.1
+
+      - name: Test the packages
+        run:  .\test.ps1 -Version "${{ github.event.inputs.version }}"
