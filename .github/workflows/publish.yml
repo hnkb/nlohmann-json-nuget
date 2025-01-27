@@ -14,6 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Extract Semantic Version Number
+        id: extract_version
+        shell: pwsh
+        run: |
+          $version = "${{ inputs.version }}" -replace '^v', ''
+          echo "version_number=$version" >> $env:GITHUB_OUTPUT
+
       - name: Build the packages
         run:  .\pack.ps1 -Version "${{ github.event.inputs.version }}"
 
@@ -24,9 +31,28 @@ jobs:
           path: ${{ github.event.inputs.version }}
           retention-days: 1
 
-
       - name: Enable MSVC Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1.12.1
 
       - name: Test the packages
         run:  .\test.ps1 -Version "${{ github.event.inputs.version }}"
+
+      - name: Push nlohmann.json Package
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          nuget push "${{ inputs.version }}/nlohmann.json.${{ steps.extract_version.outputs.version_number }}.nupkg" `
+            -ApiKey $env:NUGET_API_KEY `
+            -SkipDuplicate `
+            -Source https://api.nuget.org/v3/index.json
+
+      - name: Push nlohmann.json.decomposed Package
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          nuget push "${{ inputs.version }}/nlohmann.json.decomposed.${{ steps.extract_version.outputs.version_number }}.nupkg" `
+            -ApiKey $env:NUGET_API_KEY `
+            -SkipDuplicate `
+            -Source https://api.nuget.org/v3/index.json
