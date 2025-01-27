@@ -13,11 +13,3 @@ Add [`nlohmann.json` package](https://www.nuget.org/packages/nlohmann.json/) fro
 ```
 PM> Install-Package nlohmann.json -Version x.x.x
 ```
-
-## Packaging
-1. Download the latest NuGet command-line interface (nuget.exe) from https://www.nuget.org/downloads and copy to this folder.
-2. In a Visual Studio command-line, run the `pack.ps1` script passing the version you want to create a package for:
-
-```
-.\pack.ps1 -Version "v3.11.3"
-```

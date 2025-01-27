@@ -1,7 +1,9 @@
 name: Check for New Releases
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:     # Allows manual triggering
+  schedule:
+    - cron: '0 0 * * 0'  # Runs every Sunday at midnight (UTC)
 
 jobs:
   find-new-versions:
